@@ -41,25 +41,28 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
     setIsScanning(false);
   };
 
-  const handleScan = (data: string) => {
-    try {
-      const ticketData = JSON.parse(data);
-      setScannedData(ticketData);
-      
-      // Vérifier si le ticket existe
-      const guest = guests.find(g => g.id === ticketData.guestId);
-      if (guest) {
-        setScanResult('success');
-        onScanTicket(ticketData);
-      } else {
-        setScanResult('error');
-      }
-      
-      stopScanning();
-    } catch (error) {
+  // Fonction pour simuler un scan (à remplacer par une vraie implémentation)
+  const simulateScan = () => {
+    // Simulation d'un scan réussi pour démonstration
+    const mockTicketData = {
+      ticketId: 'TKT-DEMO-1234',
+      guestId: guests[0]?.id || 'demo-id',
+      guestName: guests[0]?.fullName || 'Invité Démo',
+      tableNumber: guests[0]?.tableNumber || 1,
+      status: guests[0]?.status || 'Standard'
+    };
+    
+    setScannedData(mockTicketData);
+    
+    const guest = guests.find(g => g.id === mockTicketData.guestId);
+    if (guest) {
+      setScanResult('success');
+      onScanTicket(mockTicketData);
+    } else {
       setScanResult('error');
-      console.error('Erreur lors du scan:', error);
     }
+    
+    stopScanning();
   };
 
   const resetScanner = () => {
@@ -112,6 +115,12 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
             className="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full hover:bg-red-700"
           >
             <XCircle className="h-5 w-5" />
+          </button>
+          <button
+            onClick={simulateScan}
+            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Simuler un scan
           </button>
         </div>
       )}

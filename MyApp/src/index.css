@@ -6,6 +6,7 @@
 }
 
 body {
+  margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -551,23 +552,8 @@ body {
   }
 }
 
-.fade-in {
+.ticket-animation {
   animation: fadeIn 0.5s ease-out;
-}
-
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.slide-in {
-  animation: slideIn 0.3s ease;
 }
 
 /* Loading states */
@@ -618,4 +604,28 @@ body {
 
 .empty-state p {
   font-size: 0.875rem;
+}
+
+/* Amélioration du scroll sur mobile */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Styles pour les QR codes */
+.qr-code-container {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive design amélioré */
+@media (max-width: 640px) {
+  .mobile-padding {
+    padding: 1rem;
+  }
+  
+  .mobile-text {
+    font-size: 0.875rem;
+  }
 }
