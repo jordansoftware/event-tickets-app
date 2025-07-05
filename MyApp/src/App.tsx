@@ -5,8 +5,14 @@ import { GuestList } from './components/GuestList';
 import { Ticket } from './components/Ticket';
 import { QRScanner } from './components/QRScanner';
 import { downloadTicketAsImage, downloadTicketAsPDF, shareTicket } from './utils';
-import { loadDemoData, clearAllData } from './demo-data';
-import { Users, QrCode, Ticket as TicketIcon, BarChart3, Database, Trash2 } from 'lucide-react';
+import { 
+  addGuestToFirebase, 
+  getGuestsFromFirebase, 
+  updateGuestInFirebase, 
+  deleteGuestFromFirebase,
+  subscribeToGuests 
+} from './services/firebaseService';
+import { Users, QrCode, Ticket as TicketIcon, BarChart3 } from 'lucide-react';
 import './App.css';
 
 type TabType = 'guests' | 'tickets' | 'scanner' | 'stats';
@@ -16,36 +22,64 @@ function App() {
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('guests');
 
-  // Charger les données depuis localStorage
+  // Charger les données depuis Firebase
   useEffect(() => {
-    const savedGuests = localStorage.getItem('eventGuests');
-    if (savedGuests) {
-      setGuests(JSON.parse(savedGuests));
-    }
+    const loadGuests = async () => {
+      try {
+        const guestsData = await getGuestsFromFirebase();
+        setGuests(guestsData);
+      } catch (error) {
+        console.error('Erreur lors du chargement des invités:', error);
+        // Fallback vers localStorage si Firebase échoue
+        const savedGuests = localStorage.getItem('eventGuests');
+        if (savedGuests) {
+          setGuests(JSON.parse(savedGuests));
+        }
+      }
+    };
+
+    loadGuests();
   }, []);
 
-  // Sauvegarder les données dans localStorage
+  // Écouter les changements en temps réel
   useEffect(() => {
-    localStorage.setItem('eventGuests', JSON.stringify(guests));
-  }, [guests]);
+    const unsubscribe = subscribeToGuests((guestsData) => {
+      setGuests(guestsData);
+    });
 
-  const addGuest = (guest: Guest) => {
-    setGuests(prev => [...prev, guest]);
-    setSelectedGuest(guest);
-    setActiveTab('tickets');
+    return () => unsubscribe();
+  }, []);
+
+  const addGuest = async (guest: Guest) => {
+    try {
+      await addGuestToFirebase(guest);
+      setSelectedGuest(guest);
+      setActiveTab('tickets');
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de l\'invité:', error);
+      alert('Erreur lors de l\'ajout de l\'invité. Veuillez réessayer.');
+    }
   };
 
-  const updateGuestStatus = (guestId: string, status: 'Valid' | 'Scanned' | 'Invalid') => {
-    setGuests(prev => prev.map(guest => 
-      guest.id === guestId ? { ...guest, ticketStatus: status } : guest
-    ));
+  const updateGuestStatus = async (guestId: string, status: 'Valid' | 'Scanned' | 'Invalid') => {
+    try {
+      await updateGuestInFirebase(guestId, { ticketStatus: status });
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error);
+      alert('Erreur lors de la mise à jour du statut. Veuillez réessayer.');
+    }
   };
 
-  const deleteGuest = (guestId: string) => {
+  const deleteGuest = async (guestId: string) => {
     if (confirm('Êtes-vous sûr de vouloir supprimer cet invité ?')) {
-      setGuests(prev => prev.filter(guest => guest.id !== guestId));
-      if (selectedGuest?.id === guestId) {
-        setSelectedGuest(null);
+      try {
+        await deleteGuestFromFirebase(guestId);
+        if (selectedGuest?.id === guestId) {
+          setSelectedGuest(null);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la suppression:', error);
+        alert('Erreur lors de la suppression. Veuillez réessayer.');
       }
     }
   };
@@ -235,7 +269,7 @@ function App() {
       {/* Footer */}
       <footer className="bg-gray-800 text-white text-center py-4 mt-8">
         <p className="text-sm text-gray-400">
-          © 2024 Gestionnaire d'Événement - Application mobile de gestion de tickets
+          © 2024 JORDAN SOFTWARE - Application mobile de gestion de tickets
         </p>
       </footer>
     </div>
