@@ -269,7 +269,7 @@ function App() {
       {/* Footer */}
       <footer className="bg-gray-800 text-white text-center py-4 mt-8">
         <p className="text-sm text-gray-400">
-          © 2024 JORDAN SOFTWARE - Application mobile de gestion de tickets
+          © 2025 JORDAN SOFTWARE - Application mobile de gestion de Billets D'invitations
         </p>
       </footer>
     </div>
