@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { User, Phone, Hash, Crown, Plus } from 'lucide-react';
-import type { Guest } from '../types';
+import { User, Hash, Crown, Plus } from 'lucide-react';
 
 interface GuestFormProps {
   onAddGuest: (guestData: {
     fullName: string;
-    phoneNumber: string;
     tableNumber: string;
     status: 'VIP' | 'Standard';
   }) => void;
@@ -14,7 +12,6 @@ interface GuestFormProps {
 export const GuestForm = ({ onAddGuest }: GuestFormProps) => {
   const [formData, setFormData] = useState({
     fullName: '',
-    phoneNumber: '',
     tableNumber: '',
     status: 'Standard' as 'VIP' | 'Standard'
   });
@@ -24,14 +21,13 @@ export const GuestForm = ({ onAddGuest }: GuestFormProps) => {
     e.preventDefault();
     console.log('Formulaire soumis avec les données:', formData);
     
-    if (formData.fullName && formData.phoneNumber && formData.tableNumber) {
+    if (formData.fullName && formData.tableNumber) {
       setIsSubmitting(true);
       try {
         console.log('Données valides, appel de onAddGuest...');
         await onAddGuest(formData);
         setFormData({
           fullName: '',
-          phoneNumber: '',
           tableNumber: '',
           status: 'Standard'
         });
@@ -44,7 +40,6 @@ export const GuestForm = ({ onAddGuest }: GuestFormProps) => {
     } else {
       console.log('Données invalides:', {
         fullName: !!formData.fullName,
-        phoneNumber: !!formData.phoneNumber,
         tableNumber: !!formData.tableNumber
       });
       alert('Veuillez remplir tous les champs obligatoires');
@@ -73,24 +68,6 @@ export const GuestForm = ({ onAddGuest }: GuestFormProps) => {
             onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
             className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 bg-white shadow-sm"
             placeholder="Prénom et nom"
-            required
-          />
-        </div>
-
-        {/* Numéro de téléphone */}
-        <div className="group">
-          <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-            <div className="flex items-center justify-center w-6 h-6 bg-green-100 rounded-full mr-3">
-              <Phone className="h-3 w-3 text-green-600" />
-            </div>
-            Numéro de téléphone
-          </label>
-          <input
-            type="tel"
-            value={formData.phoneNumber}
-            onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-            className="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all duration-300 bg-white shadow-sm"
-            placeholder="06 12 34 56 78"
             required
           />
         </div>

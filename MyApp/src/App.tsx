@@ -66,7 +66,6 @@ function App() {
 
   const handleAddGuest = async (guestData: {
     fullName: string;
-    phoneNumber: string;
     tableNumber: string;
     status: 'VIP' | 'Standard';
   }) => {

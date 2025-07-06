@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { QrCode, Download, Share2, FileText, Gem, MapPin, User } from 'lucide-react';
+import { Download, Share2, FileText, Gem } from 'lucide-react';
 import { generateQRCode } from '../utils/qrCodeUtils';
 import type { Guest } from '../types';
 

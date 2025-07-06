@@ -50,7 +50,6 @@ export const guestService = {
         guests.push({
           id: doc.id,
           fullName: data.fullName || '',
-          phoneNumber: data.phoneNumber || '',
           tableNumber: data.tableNumber || 1,
           status: data.status || 'Standard',
           ticketId: data.ticketId || '',
@@ -75,7 +74,6 @@ export const guestService = {
   // Ajouter un nouvel invité
   async addGuest(guestData: {
     fullName: string;
-    phoneNumber: string;
     tableNumber: string;
     status: 'VIP' | 'Standard';
   }): Promise<Guest> {
@@ -141,7 +139,6 @@ export const guestService = {
       const allGuests = await this.getAllGuests();
       return allGuests.filter(guest => 
         guest.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        guest.phoneNumber.includes(searchTerm) ||
         guest.ticketId.includes(searchTerm)
       );
     } catch (error) {

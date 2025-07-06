@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { User, Hash, Crown, Plus } from 'lucide-react';
-import type { Guest } from '../types';
 
 interface GuestFormProps {
   onAddGuest: (guestData: {

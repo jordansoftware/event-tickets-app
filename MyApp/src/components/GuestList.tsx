@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, Filter, Crown, User, Phone, Hash, CheckCircle, Clock, XCircle, Trash2, Edit } from 'lucide-react';
+import { useState } from 'react';
+import { Search, Filter, Crown, User, Hash, CheckCircle, Clock, XCircle, Trash2 } from 'lucide-react';
 import type { Guest } from '../types';
 
 interface GuestListProps {
@@ -15,7 +15,6 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
 
   const filteredGuests = guests.filter(guest => {
     const matchesSearch = guest.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         guest.phoneNumber.includes(searchTerm) ||
                          guest.ticketId.includes(searchTerm);
     const matchesStatus = statusFilter === 'all' || guest.ticketStatus === statusFilter;
     const matchesType = typeFilter === 'all' || guest.status === typeFilter;
@@ -96,7 +95,7 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
           <Search className="h-5 w-5 text-gray-400" />
           <input
             type="text"
-            placeholder="Rechercher par nom, téléphone ou ID ticket..."
+            placeholder="Rechercher par nom ou ID ticket..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -157,11 +156,7 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
                     </span>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <Phone className="h-4 w-4 mr-2" />
-                      {guest.phoneNumber}
-                    </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
                     <div className="flex items-center">
                       <Hash className="h-4 w-4 mr-2" />
                       Table #{guest.tableNumber}

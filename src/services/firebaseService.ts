@@ -9,7 +9,7 @@ import {
   orderBy,
   onSnapshot,
   serverTimestamp,
-  Timestamp 
+ 
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Guest } from '../types';

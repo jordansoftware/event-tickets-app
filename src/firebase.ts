@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getDocs, collection } from 'firebase/firestore';
 
@@ -38,7 +38,7 @@ export const auth = getAuth(app);
 export const checkFirebaseConnection = async (): Promise<boolean> => {
   try {
     // Test simple de connexion
-    const testDoc = await getDocs(collection(db, 'test'));
+    await getDocs(collection(db, 'test'));
     return true;
   } catch (error) {
     console.error('Erreur de connexion Firebase:', error);

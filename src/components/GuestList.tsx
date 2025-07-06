@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, Filter, Crown, User, Hash, CheckCircle, Clock, XCircle, Trash2, Edit } from 'lucide-react';
+import { useState } from 'react';
+import { Search, Filter, Crown, User, Hash, Trash2 } from 'lucide-react';
 import type { Guest } from '../types';
 
 interface GuestListProps {
@@ -21,19 +21,6 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
     
     return matchesSearch && matchesStatus && matchesType;
   });
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Valid':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'Scanned':
-        return <Clock className="h-4 w-4 text-blue-500" />;
-      case 'Invalid':
-        return <XCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <Clock className="h-4 w-4 text-gray-500" />;
-    }
-  };
 
   const getStatusColor = (status: string) => {
     switch (status) {

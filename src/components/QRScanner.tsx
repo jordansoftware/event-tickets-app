@@ -15,7 +15,6 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     return () => {
@@ -74,7 +73,6 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
       videoRef.current.srcObject = null;
     }
     if (codeReaderRef.current) {
-      codeReaderRef.current.reset();
       codeReaderRef.current = null;
     }
   };

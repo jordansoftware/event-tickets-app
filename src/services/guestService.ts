@@ -6,7 +6,7 @@ import {
   deleteDoc, 
   doc, 
   query, 
-  orderBy 
+ 
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Guest } from '../types';
@@ -14,10 +14,7 @@ import type { Guest } from '../types';
 // Collection Firestore pour les invités
 const GUESTS_COLLECTION = 'guests';
 
-// Générer un ID unique
-const generateId = (): string => {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
-};
+
 
 // Générer un ID de ticket unique
 const generateTicketId = (): string => {
