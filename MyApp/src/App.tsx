@@ -24,7 +24,7 @@ function App() {
   const loadGuests = async () => {
     try {
       setLoading(true);
-      console.log('🔄 Début du chargement des invités...');
+      console.log('🔄 Début du chargement des invitéss...');
       
       // Timeout de 10 secondes pour Firebase
       const timeoutPromise = new Promise((_, reject) => {
