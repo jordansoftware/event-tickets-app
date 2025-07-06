@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@types/qrcode": "^1.5.5",
+    "@zxing/browser": "^0.1.5",
+    "dom-to-image-more": "^3.6.0",
     "firebase": "^11.10.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",

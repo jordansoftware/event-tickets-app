@@ -1,20 +1,22 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { QrCode, Download, Share2, FileText, Gem, MapPin, User } from 'lucide-react';
+import { generateQRCode } from '../utils/qrCodeUtils';
 import type { Guest } from '../types';
-import { generateQRCode } from '../utils';
-import { Download, Share2, QrCode, Crown, Hash, User, Heart, Sparkles } from 'lucide-react';
 
 interface TicketProps {
   guest: Guest;
-  onDownloadImage: () => void;
-  onDownloadPDF: () => void;
-  onShare: () => void;
+  onDownloadImage: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
+  onDownloadPDF: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
+  onShare: (guest: Guest) => void;
 }
 
 export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: TicketProps) => {
   const [qrCode, setQrCode] = useState<string>('');
+  const [qrLoaded, setQrLoaded] = useState(false);
   const ticketRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setQrLoaded(false);
     const generateQR = async () => {
       const qrData = JSON.stringify({
         ticketId: guest.ticketId,
@@ -26,178 +28,99 @@ export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: Ticke
       const qrCodeDataURL = await generateQRCode(qrData);
       setQrCode(qrCodeDataURL);
     };
-
     generateQR();
   }, [guest]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'VIP':
-        return 'bg-gradient-to-r from-rose-400 to-pink-500';
-      case 'Standard':
-        return 'bg-gradient-to-r from-purple-400 to-indigo-500';
-      default:
-        return 'bg-gradient-to-r from-rose-400 to-pink-500';
-    }
-  };
-
-  const getTicketStatusColor = (status: string) => {
-    switch (status) {
-      case 'Valid':
-        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'Scanned':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'Invalid':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
+  // Infos fixes mariage
+  const weddingNames = 'GAELLE & MAXIME';
+  const weddingDate = 'SAMEDI 16 AOÛT 2025';
+  const weddingHour = '20H';
+  const weddingPlace = 'MJS Bafoussam';
 
   return (
-    <div className="bg-gradient-to-br from-rose-50 to-pink-50 rounded-3xl shadow-2xl p-8 mb-8 border border-rose-200">
-      <div 
+    <div className="flex justify-center items-center py-8">
+      {/* Style global pour l'export dom-to-image-more : supprime toutes les bordures et ombres */}
+      <style>{`
+        .export-ticket * {
+          border: none !important;
+          box-shadow: none !important;
+        }
+      `}</style>
+      <div
         ref={ticketRef}
-        className="relative overflow-hidden rounded-2xl border-2 border-rose-200 bg-gradient-to-br from-white to-rose-50"
-        style={{ minHeight: '450px' }}
+        className="export-ticket flex w-full max-w-3xl rounded-2xl overflow-hidden shadow-2xl"
+        style={{ background: 'transparent', minHeight: 260 }}
       >
-        {/* Header avec thème mariage */}
-        <div className={`${getStatusColor(guest.status)} text-white p-6 text-center relative overflow-hidden`}>
-          {/* Éléments décoratifs */}
-          <div className="absolute top-2 left-2 opacity-20">
-            <Heart className="h-8 w-8" />
-          </div>
-          <div className="absolute top-2 right-2 opacity-20">
-            <Sparkles className="h-8 w-8" />
-          </div>
-          <div className="absolute bottom-2 left-4 opacity-20">
-            <Sparkles className="h-6 w-6" />
-          </div>
-          <div className="absolute bottom-2 right-4 opacity-20">
-            <Heart className="h-6 w-6" />
-          </div>
-          
-          <div className="flex items-center justify-center mb-3">
-            <Heart className="mr-3 h-7 w-7" />
-            <h2 className="text-2xl font-bold font-serif">INVITATION MARIAGE</h2>
-            <Heart className="ml-3 h-7 w-7" />
-          </div>
-          <p className="text-sm opacity-90 font-medium">Cérémonie & Réception</p>
-          <div className="mt-2 text-xs opacity-75">
-            {guest.status === 'VIP' ? 'Invité d\'Honneur' : 'Invité Privilégié'}
+        {/* Volet gauche vert horizontal */}
+        <div className="relative flex flex-col items-center justify-center py-4 px-2 w-[140px] min-w-[120px] bg-gradient-to-b from-green-500 to-green-700 text-white">
+          <div className="flex flex-col items-center justify-center h-full">
+            <Gem className="w-8 h-8 mb-2 text-yellow-200" />
+            <div className="text-2xl font-black tracking-widest text-center" style={{letterSpacing:'0.18em', fontFamily:'Montserrat, Arial Black, Arial, sans-serif'}}>{weddingNames}</div>
           </div>
         </div>
-
-        {/* Contenu principal */}
-        <div className="p-8">
-          {/* Informations de l'invité avec style mariage */}
-          <div className="space-y-5 mb-6">
-            <div className="flex items-center bg-gradient-to-r from-rose-50 to-pink-50 p-4 rounded-xl border border-rose-100">
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-rose-400 to-pink-500 rounded-full mr-4">
-                <User className="h-5 w-5 text-white" />
+        {/* Volet droit bleu nuit */}
+        <div className="flex-1 bg-gradient-to-b from-blue-900 to-purple-900 text-white py-8 px-8 flex flex-row items-center relative font-sans" style={{fontFamily: 'Montserrat, Arial Black, Arial, sans-serif'}}>
+          {/* Colonne principale */}
+          <div className="flex-1 flex flex-col justify-center gap-2">
+            <div className="uppercase tracking-[0.18em] text-[1rem] font-bold text-white/80 mb-1">INVITATION MARIAGE</div>
+            <div className="text-[2.1rem] md:text-[2.7rem] font-black text-white text-left leading-tight mb-1" style={{fontFamily: 'Montserrat, Arial Black, Arial, sans-serif'}}>{guest.fullName}</div>
+            <div className="text-lg font-bold text-white/80 mb-2">{weddingDate} | {weddingHour}</div>
+            {/* 3 blocs ligne */}
+            <div className="flex flex-row gap-4 mb-2">
+              <div className="bg-white/90 text-blue-900 rounded-lg px-4 py-2 text-xs font-bold flex flex-col items-center min-w-[70px]">
+                Lieu
+                <span className="text-[1em] font-extrabold">{weddingPlace}</span>
               </div>
-              <div>
-                <p className="text-xs text-rose-600 font-medium uppercase tracking-wide">Nom de l'invité</p>
-                <p className="font-serif text-lg text-gray-800 font-semibold">{guest.fullName}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl border border-purple-100">
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-purple-400 to-indigo-500 rounded-full mr-4">
-                <Hash className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <p className="text-xs text-purple-600 font-medium uppercase tracking-wide">Table</p>
-                <p className="font-serif text-lg text-gray-800 font-semibold">#{guest.tableNumber}</p>
-              </div>
-            </div>
-
-            <div className="flex items-center bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-xl border border-amber-100">
-              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full mr-4">
-                <Crown className="h-5 w-5 text-white" />
-              </div>
-              <div>
-                <p className="text-xs text-amber-600 font-medium uppercase tracking-wide">Statut</p>
-                <div className="flex items-center">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium border ${
-                    guest.status === 'VIP' 
-                      ? 'bg-gradient-to-r from-rose-100 to-pink-100 text-rose-800 border-rose-200' 
-                      : 'bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 border-purple-200'
-                  }`}>
-                    {guest.status === 'VIP' ? '💎 VIP' : '✨ Standard'}
-                  </span>
-                </div>
+              <div className={`rounded-lg px-4 py-2 text-xs font-bold flex flex-col items-center min-w-[70px] ${guest.status === 'VIP' ? 'bg-yellow-200 text-yellow-900' : 'bg-white/90 text-blue-900'}`}>
+                Statut
+                <span className="text-[1em] font-extrabold">{guest.status === 'VIP' ? '💎 VIP' : 'Standard'}</span>
               </div>
             </div>
           </div>
-
-          {/* QR Code avec style mariage */}
-          <div className="text-center mb-6">
-            <div className="inline-block p-6 bg-gradient-to-br from-white to-rose-50 rounded-2xl border-2 border-rose-200 shadow-lg">
-              {qrCode ? (
-                <img src={qrCode} alt="QR Code" className="w-36 h-36" />
-              ) : (
-                <div className="w-36 h-36 bg-gradient-to-br from-rose-100 to-pink-100 rounded-xl flex items-center justify-center border-2 border-rose-200">
-                  <QrCode className="h-12 w-12 text-rose-400" />
-                </div>
-              )}
-            </div>
-            <p className="text-xs text-rose-600 mt-3 font-medium">Scannez pour confirmer votre présence</p>
+          {/* QR code */}
+          <div className="flex flex-col items-center justify-center ml-6">
+            {qrCode ? (
+              <div className="bg-white p-2 rounded-lg border-4 border-gray-200 shadow-lg" style={{display:'inline-block'}}>
+                <img src={qrCode} alt="QR Code" className="w-32 h-32" crossOrigin="anonymous" onLoad={() => setQrLoaded(true)} />
+              </div>
+            ) : (
+              <div className="w-32 h-32 bg-white rounded-lg flex items-center justify-center border-4 border-gray-200">
+                <QrCode className="h-14 w-14 text-blue-400" />
+              </div>
+            )}
+            <div className="text-xs text-pink-200 mt-2 font-semibold tracking-wide text-center" style={{letterSpacing: '0.08em'}}>Scannez pour confirmer votre présence</div>
           </div>
-
-          {/* Numéro de ticket avec style élégant */}
-          <div className="text-center bg-gradient-to-r from-gray-50 to-rose-50 p-4 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 font-medium uppercase tracking-wide mb-1">Numéro d'invitation</p>
-            <p className="font-mono text-sm text-gray-700 font-semibold">{guest.ticketId}</p>
-          </div>
-
-          {/* Statut du ticket */}
-          <div className="absolute top-6 right-6">
-            <span className={`px-3 py-2 rounded-full text-xs font-medium border ${getTicketStatusColor(guest.ticketStatus)}`}>
-              {guest.ticketStatus === 'Valid' ? '✅ Valide' : 
-               guest.ticketStatus === 'Scanned' ? '🎉 Présent' : '❌ Invalide'}
-            </span>
-          </div>
-        </div>
-
-        {/* Filigrane décoratif */}
-        <div className="absolute inset-0 pointer-events-none opacity-5">
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-            <Heart className="h-64 w-64 text-rose-400" />
-          </div>
-        </div>
-
-        {/* Éléments décoratifs supplémentaires */}
-        <div className="absolute top-4 left-4 opacity-10">
-          <Sparkles className="h-6 w-6 text-rose-400" />
-        </div>
-        <div className="absolute bottom-4 right-4 opacity-10">
-          <Heart className="h-6 w-6 text-pink-400" />
         </div>
       </div>
-
-      {/* Boutons d'action avec style mariage */}
-      <div className="flex space-x-3 mt-6">
+      {/* Boutons d'action */}
+      <div className="flex flex-col gap-2 ml-4">
         <button
-          onClick={onDownloadImage}
-          className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 px-4 rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 flex items-center justify-center font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+          onClick={() => onDownloadImage(ticketRef as React.RefObject<HTMLDivElement>, guest)}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-green-700 transition"
+          disabled={!qrLoaded}
         >
-          <Download className="h-5 w-5 mr-2" />
-          Télécharger
+          {qrLoaded ? (
+            <><Download className="h-5 w-5 inline mr-1" />Télécharger Image</>
+          ) : (
+            <><div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white inline-block mr-1"></div>QR en cours...</>
+          )}
         </button>
         <button
-          onClick={onDownloadPDF}
-          className="flex-1 bg-gradient-to-r from-rose-500 to-pink-600 text-white py-3 px-4 rounded-xl hover:from-rose-600 hover:to-pink-700 transition-all duration-300 flex items-center justify-center font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+          onClick={() => onDownloadPDF(ticketRef as React.RefObject<HTMLDivElement>, guest)}
+          className="bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-blue-800 transition"
+          disabled={!qrLoaded}
         >
-          <Download className="h-5 w-5 mr-2" />
-          PDF
+          {qrLoaded ? (
+            <><FileText className="h-5 w-5 inline mr-1" />Télécharger PDF</>
+          ) : (
+            <><div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white inline-block mr-1"></div>QR en cours...</>
+          )}
         </button>
         <button
-          onClick={onShare}
-          className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-3 px-4 rounded-xl hover:from-purple-600 hover:to-indigo-700 transition-all duration-300 flex items-center justify-center font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
+          onClick={() => onShare(guest)}
+          className="bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-purple-800 transition"
         >
-          <Share2 className="h-5 w-5 mr-2" />
-          Partager
+          <Share2 className="h-5 w-5 inline mr-1" />Partager
         </button>
       </div>
     </div>
