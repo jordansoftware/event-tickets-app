@@ -7,7 +7,7 @@ import { TicketModal } from './components/TicketModal';
 import { QRScanner } from './components/QRScanner';
 import type { Guest } from './types';
 import { guestService } from './services/guestService';
-import { downloadAsImage, downloadAsPDF, shareTicket } from './utils/ticketUtils';
+import { downloadAsImage, downloadAsPDF, shareTicketWithPDF } from './utils/ticketUtils';
 
 type TabType = 'guests' | 'tickets' | 'scanner' | 'stats';
 
@@ -135,8 +135,8 @@ function App() {
     downloadAsPDF(ticketRef, guest);
   };
 
-  const handleShare = (guest: Guest) => {
-    shareTicket(guest);
+  const handleShare = (ticketRef: React.RefObject<HTMLDivElement> | null, guest: Guest) => {
+    shareTicketWithPDF(ticketRef, guest);
   };
 
   const stats = {
@@ -316,9 +316,7 @@ function App() {
               <div className="mb-6">
                 <TicketModal
                   guest={newGuest}
-                  onDownloadImage={handleDownloadImage}
-                  onDownloadPDF={handleDownloadPDF}
-                  onShare={handleShare}
+                  onShare={(guest) => handleShare(null, guest)}
                 />
               </div>
               

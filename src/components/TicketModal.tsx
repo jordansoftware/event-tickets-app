@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { generateQRCode } from '../utils/qrCodeUtils';
 import type { Guest } from '../types';
 
 interface TicketModalProps {
   guest: Guest;
-  onDownloadImage?: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
-  onDownloadPDF?: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
   onShare?: (guest: Guest) => void;
 }
 
-export const TicketModal = ({ guest }: TicketModalProps) => {
+export const TicketModal = ({ guest, onShare }: TicketModalProps) => {
   const [qrCode, setQrCode] = useState<string>('');
 
   useEffect(() => {
@@ -47,7 +45,7 @@ export const TicketModal = ({ guest }: TicketModalProps) => {
           <div style={{ fontSize: 16, color: '#444', marginBottom: 0 }}>{heure}</div>
         </div>
         {/* QR code à droite */}
-        <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingRight: 4 }}>
+        <div style={{ flex: '0 0 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
           {qrCode ? (
             <img src={qrCode} alt="QR Code" style={{ width: 140, height: 140, background: 'white', border: '2px solid #333', borderRadius: 8 }} />
           ) : (
@@ -55,6 +53,12 @@ export const TicketModal = ({ guest }: TicketModalProps) => {
           )}
         </div>
       </div>
+      {/* Bouton partager si besoin */}
+      {onShare && (
+        <button onClick={() => onShare(guest)} style={{marginTop: 16, background: '#7c3aed', color: 'white', padding: '10px 20px', borderRadius: 8, fontWeight: 'bold', border: 'none', cursor: 'pointer'}}>
+          Partager
+        </button>
+      )}
     </div>
   );
 }; 

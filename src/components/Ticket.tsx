@@ -8,7 +8,7 @@ interface TicketProps {
   guest: Guest;
   onDownloadImage: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
   onDownloadPDF: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
-  onShare: (guest: Guest) => void;
+  onShare: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
 }
 
 export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: TicketProps) => {
@@ -54,7 +54,7 @@ export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: Ticke
   const weddingPlace = 'MJS Bafoussam';
 
   return (
-    <div className="flex justify-center items-center py-8">
+    <div className="flex flex-col items-center py-4 px-2 w-full">
       {/* Style global pour l'export dom-to-image-more : supprime toutes les bordures et ombres */}
       <style>{`
         .export-ticket * {
@@ -64,20 +64,18 @@ export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: Ticke
       `}</style>
       <div
         ref={ticketRef}
-        className="export-ticket flex w-full max-w-3xl rounded-2xl overflow-hidden shadow-2xl"
+        className="export-ticket w-full max-w-xs md:max-w-3xl flex flex-col rounded-2xl overflow-hidden shadow-2xl mx-auto"
         style={{ background: 'transparent', minHeight: 260 }}
       >
-        {/* Volet gauche vert horizontal */}
-        <div className="relative flex flex-col items-center justify-center py-4 px-2 w-[140px] min-w-[120px] bg-gradient-to-b from-green-500 to-green-700 text-white">
-          <div className="flex flex-col items-center justify-center h-full">
-            <img src={allianceImg} alt="Alliance" className="w-10 h-10 mb-2" />
-            <div className="text-2xl font-black tracking-widest text-center" style={{letterSpacing:'0.18em', fontFamily:'Montserrat, Arial Black, Arial, sans-serif'}}>{weddingNames}</div>
-          </div>
+        {/* Bandeau vert horizontal en haut */}
+        <div className="w-full bg-gradient-to-b from-green-500 to-green-700 text-white flex flex-row items-center justify-center py-4 px-2">
+          <img src={allianceImg} alt="Alliance" className="w-10 h-10 mr-3" />
+          <div className="text-xl md:text-2xl font-black tracking-widest text-center break-words" style={{letterSpacing:'0.13em', fontFamily:'Montserrat, Arial Black, Arial, sans-serif', padding: '0 2px'}}>{weddingNames}</div>
         </div>
         {/* Volet droit bleu nuit */}
-        <div className="flex-1 bg-gradient-to-b from-blue-900 to-purple-900 text-white py-8 px-8 flex flex-row items-center relative font-sans" style={{fontFamily: 'Montserrat, Arial Black, Arial, sans-serif'}}>
+        <div className="flex-1 bg-gradient-to-b from-blue-900 to-purple-900 text-white py-4 md:py-8 px-2 md:px-8 flex flex-col md:flex-row items-center relative font-sans" style={{fontFamily: 'Montserrat, Arial Black, Arial, sans-serif'}}>
           {/* Colonne principale */}
-          <div className="flex-1 flex flex-col justify-center gap-2">
+          <div className="flex-1 flex flex-col justify-center gap-2 w-full">
             <div className="uppercase tracking-[0.18em] text-[1rem] font-bold text-white/80 mb-1">INVITATION MARIAGE</div>
             <div className="text-[2.1rem] md:text-[2.7rem] font-black text-white text-left leading-tight mb-1" style={{fontFamily: 'Montserrat, Arial Black, Arial, sans-serif'}}>{guest.fullName}</div>
             <div className="text-lg font-bold text-white/80 mb-2">{weddingDate} | {weddingHour}</div>
@@ -94,13 +92,13 @@ export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: Ticke
             </div>
           </div>
           {/* QR code */}
-          <div className="flex flex-col items-center justify-center ml-6">
+          <div className="flex flex-col items-center justify-center ml-0 md:ml-6 mt-4 md:mt-0 w-full md:w-auto">
             {qrCode && qrLoaded ? (
               <div className="bg-white p-2 rounded-lg border-4 border-gray-200 shadow-lg" style={{display:'inline-block'}}>
-                <img src={qrCode} alt="QR Code" className="w-32 h-32" crossOrigin="anonymous" />
+                <img src={qrCode} alt="QR Code" className="w-24 h-24 md:w-32 md:h-32" crossOrigin="anonymous" />
               </div>
             ) : (
-              <div className="w-32 h-32 bg-white rounded-lg flex items-center justify-center border-4 border-gray-200">
+              <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-lg flex items-center justify-center border-4 border-gray-200">
                 <div className="flex flex-col items-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
                   <span className="text-xs text-blue-600 font-medium">QR en cours...</span>
@@ -112,7 +110,7 @@ export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: Ticke
         </div>
       </div>
       {/* Boutons d'action */}
-      <div className="flex flex-col gap-2 ml-4">
+      <div className="flex flex-col gap-2 mt-4 w-full max-w-xs mx-auto">
         <button
           onClick={() => onDownloadImage(ticketRef as React.RefObject<HTMLDivElement>, guest)}
           className="bg-green-600 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-green-700 transition"
@@ -136,7 +134,7 @@ export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: Ticke
           )}
         </button>
         <button
-          onClick={() => onShare(guest)}
+          onClick={() => onShare(ticketRef as React.RefObject<HTMLDivElement>, guest)}
           className="bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-purple-800 transition"
         >
           <Share2 className="h-5 w-5 inline mr-1" />Partager

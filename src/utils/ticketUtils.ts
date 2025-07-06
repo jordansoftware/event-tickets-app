@@ -86,4 +86,44 @@ export const shareTicket = async (guest: Guest) => {
     console.error('Erreur lors du partage:', error);
     alert('Erreur lors du partage du ticket');
   }
+};
+
+// Partager le ticket en générant un PDF et en le partageant via l'API Web Share
+export const shareTicketWithPDF = async (ticketRef: React.RefObject<HTMLDivElement> | null, guest?: Guest) => {
+  if (!ticketRef || !ticketRef.current) return;
+  try {
+    // Attendre 500ms pour s'assurer que le QR code est bien peint
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const dataUrl = await domtoimage.toPng(ticketRef.current, {
+      bgcolor: '#ffffff',
+      cacheBust: true
+    });
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const imgProps = pdf.getImageProperties(dataUrl);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    const fileName = guest ? `Billet_${cleanFileName(guest.fullName)}.pdf` : `Billet.pdf`;
+    const pdfBlob = pdf.output('blob');
+    const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'Billet Invitation',
+        text: 'Voici ton billet pour le mariage !'
+      });
+    } else {
+      // Fallback : propose le téléchargement
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+      alert("Le partage direct de fichier n'est pas supporté sur ce navigateur. Le billet a été téléchargé.");
+    }
+  } catch (error) {
+    console.error('Erreur lors du partage du PDF:', error);
+    alert('Erreur lors du partage du billet');
+  }
 }; 
