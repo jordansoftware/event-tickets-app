@@ -3,26 +3,24 @@ import { QrCode, Download, Share2, FileText, Gem, MapPin, User } from 'lucide-re
 import { generateQRCode } from '../utils/qrCodeUtils';
 import type { Guest } from '../types';
 
-interface TicketProps {
+interface TicketModalProps {
   guest: Guest;
   onDownloadImage: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
   onDownloadPDF: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
   onShare: (guest: Guest) => void;
 }
 
-export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: TicketProps) => {
+export const TicketModal = ({ guest, onDownloadImage, onDownloadPDF, onShare }: TicketModalProps) => {
   const [qrCode, setQrCode] = useState<string>('');
   const [qrLoaded, setQrLoaded] = useState(false);
   const ticketRef = useRef<HTMLDivElement>(null);
 
+  // Générer le QR code immédiatement au montage
   useEffect(() => {
-    console.log('Ticket component mounted for guest:', guest.fullName, guest.ticketId);
-    setQrLoaded(false);
-    setQrCode('');
+    console.log('TicketModal: Génération du QR code pour', guest.fullName);
     
     const generateQR = async () => {
       try {
-        console.log('Generating QR code for:', guest.ticketId);
         const qrData = JSON.stringify({
           ticketId: guest.ticketId,
           guestId: guest.id,
@@ -30,21 +28,22 @@ export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: Ticke
           tableNumber: guest.tableNumber,
           status: guest.status
         });
+        
+        console.log('TicketModal: Données QR:', qrData);
         const qrCodeDataURL = await generateQRCode(qrData);
-        console.log('QR code generated successfully');
+        console.log('TicketModal: QR code généré avec succès');
+        
         setQrCode(qrCodeDataURL);
         setQrLoaded(true);
       } catch (error) {
-        console.error('Erreur lors de la génération du QR code:', error);
-        setQrLoaded(true); // Pour éviter un chargement infini
+        console.error('TicketModal: Erreur génération QR:', error);
+        setQrLoaded(true);
       }
     };
-    
-    // Délai court pour s'assurer que le composant est bien monté
-    setTimeout(() => {
-      generateQR();
-    }, 100);
-  }, [guest.id, guest.ticketId]);
+
+    // Générer immédiatement
+    generateQR();
+  }, []); // Dépendances vides pour ne s'exécuter qu'une fois
 
   // Infos fixes mariage
   const weddingNames = 'GAELLE & MAXIME';
@@ -54,7 +53,6 @@ export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: Ticke
 
   return (
     <div className="flex justify-center items-center py-8">
-      {/* Style global pour l'export dom-to-image-more : supprime toutes les bordures et ombres */}
       <style>{`
         .export-ticket * {
           border: none !important;
@@ -143,4 +141,4 @@ export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: Ticke
       </div>
     </div>
   );
-};
+}; 

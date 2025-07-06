@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Search, Filter, Crown, User, Hash, CheckCircle, Clock, XCircle, Trash2, Edit } from 'lucide-react';
 import type { Guest } from '../types';
-import { User, Phone, Hash, Crown, Search, Filter, CheckCircle, XCircle, Clock } from 'lucide-react';
 
 interface GuestListProps {
   guests: Guest[];
@@ -15,7 +15,6 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
 
   const filteredGuests = guests.filter(guest => {
     const matchesSearch = guest.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         guest.phoneNumber.includes(searchTerm) ||
                          guest.ticketId.includes(searchTerm);
     const matchesStatus = statusFilter === 'all' || guest.ticketStatus === statusFilter;
     const matchesType = typeFilter === 'all' || guest.status === typeFilter;
@@ -96,7 +95,7 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
           <Search className="h-5 w-5 text-gray-400" />
           <input
             type="text"
-            placeholder="Rechercher par nom, téléphone ou ID ticket..."
+            placeholder="Rechercher par nom ou ID ticket..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -136,7 +135,7 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
       </div>
 
       {/* Liste des invités */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {filteredGuests.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <User className="h-12 w-12 mx-auto mb-4 text-gray-300" />
@@ -157,11 +156,7 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
                     </span>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <Phone className="h-4 w-4 mr-2" />
-                      {guest.phoneNumber}
-                    </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
                     <div className="flex items-center">
                       <Hash className="h-4 w-4 mr-2" />
                       Table #{guest.tableNumber}
@@ -172,25 +167,23 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-2 ml-4">
-                  {getStatusIcon(guest.ticketStatus)}
-                  
+                <div className="flex items-center space-x-2">
                   <select
                     value={guest.ticketStatus}
-                    onChange={(e) => onUpdateGuestStatus(guest.id, e.target.value as any)}
+                    onChange={(e) => onUpdateGuestStatus(guest.id, e.target.value as 'Valid' | 'Scanned' | 'Invalid')}
                     className="px-2 py-1 border border-gray-300 rounded text-xs"
                   >
                     <option value="Valid">Valide</option>
                     <option value="Scanned">Scanné</option>
                     <option value="Invalid">Invalide</option>
                   </select>
-
+                  
                   <button
                     onClick={() => onDeleteGuest(guest.id)}
-                    className="text-red-500 hover:text-red-700 p-1"
+                    className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
                     title="Supprimer"
                   >
-                    <XCircle className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
               </div>

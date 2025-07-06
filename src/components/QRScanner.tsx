@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Guest } from '../types';
 import { QrCode, CheckCircle, XCircle, Camera, RotateCcw } from 'lucide-react';
+import { BrowserQRCodeReader } from '@zxing/browser';
 
 interface QRScannerProps {
   onScanTicket: (ticketData: any) => void;
@@ -11,63 +12,82 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
   const [isScanning, setIsScanning] = useState(false);
   const [scannedData, setScannedData] = useState<any>(null);
   const [scanResult, setScanResult] = useState<'success' | 'error' | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  useEffect(() => {
+    return () => {
+      stopScanning();
+    };
+    // eslint-disable-next-line
+  }, []);
 
   const startScanning = async () => {
+    setErrorMsg(null);
+    setScannedData(null);
+    setScanResult(null);
+    setIsScanning(true);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'environment' } 
+      const codeReader = new BrowserQRCodeReader();
+      codeReaderRef.current = codeReader;
+      const videoInputDevices = await BrowserQRCodeReader.listVideoInputDevices();
+      const deviceId = videoInputDevices[0]?.deviceId;
+      if (!deviceId) throw new Error('Aucune caméra détectée');
+      const previewElem = videoRef.current!;
+      codeReader.decodeFromVideoDevice(deviceId, previewElem, (result, err, controls) => {
+        if (result) {
+          try {
+            const data = JSON.parse(result.getText());
+            setScannedData(data);
+            setIsScanning(false);
+            controls.stop();
+            stopStream();
+            // Vérifier si l'invité existe
+            const guest = guests.find(g => g.ticketId === data.ticketId);
+            if (guest) {
+              setScanResult('success');
+              onScanTicket(data);
+            } else {
+              setScanResult('error');
+            }
+          } catch (e) {
+            setScanResult('error');
+            setScannedData({ ticketId: 'QR non reconnu' });
+          }
+        }
+        if (err && err.name !== 'NotFoundException') {
+          setErrorMsg('Erreur de scan : ' + err.message);
+        }
       });
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setIsScanning(true);
-        setScanResult(null);
-        setScannedData(null);
-      }
-    } catch (error) {
-      console.error('Erreur lors de l\'accès à la caméra:', error);
-      alert('Impossible d\'accéder à la caméra');
+    } catch (error: any) {
+      setErrorMsg(error.message || 'Erreur inconnue');
+      setIsScanning(false);
     }
   };
 
-  const stopScanning = () => {
+  const stopStream = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach(track => track.stop());
       videoRef.current.srcObject = null;
     }
-    setIsScanning(false);
+    if (codeReaderRef.current) {
+      codeReaderRef.current.reset();
+      codeReaderRef.current = null;
+    }
   };
 
-  // Fonction pour simuler un scan (à remplacer par une vraie implémentation)
-  const simulateScan = () => {
-    // Simulation d'un scan réussi pour démonstration
-    const mockTicketData = {
-      ticketId: 'TKT-DEMO-1234',
-      guestId: guests[0]?.id || 'demo-id',
-      guestName: guests[0]?.fullName || 'Invité Démo',
-      tableNumber: guests[0]?.tableNumber || 1,
-      status: guests[0]?.status || 'Standard'
-    };
-    
-    setScannedData(mockTicketData);
-    
-    const guest = guests.find(g => g.id === mockTicketData.guestId);
-    if (guest) {
-      setScanResult('success');
-      onScanTicket(mockTicketData);
-    } else {
-      setScanResult('error');
-    }
-    
-    stopScanning();
+  const stopScanning = () => {
+    stopStream();
+    setIsScanning(false);
   };
 
   const resetScanner = () => {
     setScannedData(null);
     setScanResult(null);
+    setErrorMsg(null);
   };
 
   return (
@@ -87,6 +107,7 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
           >
             Démarrer le scan
           </button>
+          {errorMsg && <div className="text-red-600 mt-4">{errorMsg}</div>}
         </div>
       )}
 
@@ -97,10 +118,6 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
             autoPlay
             playsInline
             className="w-full h-64 bg-gray-900 rounded-lg"
-          />
-          <canvas
-            ref={canvasRef}
-            className="hidden"
           />
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="border-2 border-white rounded-lg w-48 h-48 relative">
@@ -115,12 +132,6 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
             className="absolute top-4 right-4 bg-red-600 text-white p-2 rounded-full hover:bg-red-700"
           >
             <XCircle className="h-5 w-5" />
-          </button>
-          <button
-            onClick={simulateScan}
-            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Simuler un scan
           </button>
         </div>
       )}
@@ -138,7 +149,6 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
                 {scanResult === 'success' ? 'Ticket valide' : 'Ticket invalide'}
               </span>
             </div>
-            
             <div className="space-y-2 text-sm">
               <p><strong>Nom:</strong> {scannedData.guestName}</p>
               <p><strong>Table:</strong> #{scannedData.tableNumber}</p>
@@ -146,7 +156,6 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
               <p><strong>ID Ticket:</strong> {scannedData.ticketId}</p>
             </div>
           </div>
-          
           <div className="flex space-x-2 mt-4">
             <button
               onClick={resetScanner}

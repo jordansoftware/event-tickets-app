@@ -1,7 +1,6 @@
 export interface Guest {
   id: string;
   fullName: string;
-  phoneNumber: string;
   tableNumber: number;
   status: 'VIP' | 'Standard';
   ticketId: string;

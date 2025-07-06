@@ -7,7 +7,9 @@ import {
   doc, 
   query, 
   orderBy,
-  onSnapshot 
+  onSnapshot,
+  serverTimestamp,
+  Timestamp 
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { Guest } from '../types';
@@ -20,7 +22,7 @@ export const addGuestToFirebase = async (guest: Guest): Promise<string> => {
   try {
     const docRef = await addDoc(collection(db, GUESTS_COLLECTION), {
       ...guest,
-      createdAt: new Date().toISOString()
+      createdAt: serverTimestamp()
     });
     return docRef.id;
   } catch (error) {
@@ -35,10 +37,14 @@ export const getGuestsFromFirebase = async (): Promise<Guest[]> => {
     const q = query(collection(db, GUESTS_COLLECTION), orderBy('createdAt', 'desc'));
     const querySnapshot = await getDocs(q);
     
-    return querySnapshot.docs.map(doc => ({
-      ...doc.data(),
-      id: doc.id
-    })) as Guest[];
+    return querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        createdAt: data.createdAt?.toDate() || new Date()
+      };
+    }) as Guest[];
   } catch (error) {
     console.error('Erreur lors de la récupération des invités:', error);
     throw error;
@@ -51,7 +57,7 @@ export const updateGuestInFirebase = async (guestId: string, updates: Partial<Gu
     const guestRef = doc(db, GUESTS_COLLECTION, guestId);
     await updateDoc(guestRef, {
       ...updates,
-      updatedAt: new Date().toISOString()
+      updatedAt: serverTimestamp()
     });
   } catch (error) {
     console.error('Erreur lors de la mise à jour de l\'invité:', error);
@@ -75,10 +81,14 @@ export const subscribeToGuests = (callback: (guests: Guest[]) => void) => {
   const q = query(collection(db, GUESTS_COLLECTION), orderBy('createdAt', 'desc'));
   
   return onSnapshot(q, (querySnapshot) => {
-    const guests = querySnapshot.docs.map(doc => ({
-      ...doc.data(),
-      id: doc.id
-    })) as Guest[];
+    const guests = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+        createdAt: data.createdAt?.toDate() || new Date()
+      };
+    }) as Guest[];
     
     callback(guests);
   });

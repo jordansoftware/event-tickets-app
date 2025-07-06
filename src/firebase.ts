@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { getDocs, collection } from 'firebase/firestore';
 
 // Configuration Firebase avec variables d'environnement
 const firebaseConfig = {
@@ -13,6 +14,17 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+// Vérifier que la configuration est correcte
+console.log('Configuration Firebase:', {
+  apiKey: firebaseConfig.apiKey ? '✅ Présent' : '❌ Manquant',
+  authDomain: firebaseConfig.authDomain ? '✅ Présent' : '❌ Manquant',
+  projectId: firebaseConfig.projectId ? '✅ Présent' : '❌ Manquant',
+  storageBucket: firebaseConfig.storageBucket ? '✅ Présent' : '❌ Manquant',
+  messagingSenderId: firebaseConfig.messagingSenderId ? '✅ Présent' : '❌ Manquant',
+  appId: firebaseConfig.appId ? '✅ Présent' : '❌ Manquant',
+  measurementId: firebaseConfig.measurementId ? '✅ Présent' : '❌ Manquant'
+});
+
 // Initialiser Firebase
 const app = initializeApp(firebaseConfig);
 
@@ -21,5 +33,17 @@ export const db = getFirestore(app);
 
 // Initialiser Auth (authentification)
 export const auth = getAuth(app);
+
+// Fonction pour vérifier la connexion Firebase
+export const checkFirebaseConnection = async (): Promise<boolean> => {
+  try {
+    // Test simple de connexion
+    const testDoc = await getDocs(collection(db, 'test'));
+    return true;
+  } catch (error) {
+    console.error('Erreur de connexion Firebase:', error);
+    return false;
+  }
+};
 
 export default app; 
