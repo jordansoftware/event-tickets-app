@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Download, Share2, FileText, Gem } from 'lucide-react';
+import { Download, Share2, FileText } from 'lucide-react';
 import { generateQRCode } from '../utils/qrCodeUtils';
 import type { Guest } from '../types';
+import allianceImg from '../assets/alliance.png';
 
 interface TicketProps {
   guest: Guest;
@@ -69,7 +70,7 @@ export const Ticket = ({ guest, onDownloadImage, onDownloadPDF, onShare }: Ticke
         {/* Volet gauche vert horizontal */}
         <div className="relative flex flex-col items-center justify-center py-4 px-2 w-[140px] min-w-[120px] bg-gradient-to-b from-green-500 to-green-700 text-white">
           <div className="flex flex-col items-center justify-center h-full">
-            <Gem className="w-8 h-8 mb-2 text-yellow-200" />
+            <img src={allianceImg} alt="Alliance" className="w-10 h-10 mb-2" />
             <div className="text-2xl font-black tracking-widest text-center" style={{letterSpacing:'0.18em', fontFamily:'Montserrat, Arial Black, Arial, sans-serif'}}>{weddingNames}</div>
           </div>
         </div>
