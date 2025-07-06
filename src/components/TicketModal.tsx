@@ -4,6 +4,9 @@ import type { Guest } from '../types';
 
 interface TicketModalProps {
   guest: Guest;
+  onDownloadImage?: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
+  onDownloadPDF?: (ticketRef: React.RefObject<HTMLDivElement>, guest: Guest) => void;
+  onShare?: (guest: Guest) => void;
 }
 
 export const TicketModal = ({ guest }: TicketModalProps) => {
