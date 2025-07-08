@@ -1,3 +1,5 @@
+// Fichier utilitaire pour la gestion des tickets (génération d'ID, export, etc.)
+// Utilisé côté frontend pour manipuler les tickets invités.
 import domtoimage from 'dom-to-image-more';
 import jsPDF from 'jspdf';
 import type { Guest } from '../types';
@@ -6,6 +8,8 @@ import type { Guest } from '../types';
 function cleanFileName(name: string) {
   return name.replace(/[^a-zA-Z0-9]/g, '_');
 }
+
+// Fonction pour générer un identifiant unique pour un ticket.
 
 // Télécharger le ticket en tant qu'image
 export const downloadAsImage = async (ticketRef: React.RefObject<HTMLDivElement>, guest?: Guest) => {

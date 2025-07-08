@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Hash, Crown, Plus } from 'lucide-react';
 
+// Composant de formulaire pour ajouter ou modifier un invité (frontend)
 interface GuestFormProps {
   onAddGuest: (guestData: {
     fullName: string;

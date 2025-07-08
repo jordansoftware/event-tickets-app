@@ -1,3 +1,4 @@
+// Composant de scan de QR code pour valider les tickets (frontend)
 import { useState, useRef, useEffect } from 'react';
 import type { Guest } from '../types';
 import { QrCode, CheckCircle, XCircle, Camera, RotateCcw } from 'lucide-react';
@@ -6,9 +7,10 @@ import { BrowserQRCodeReader } from '@zxing/browser';
 interface QRScannerProps {
   onScanTicket: (ticketData: any) => void;
   guests: Guest[];
+  active: boolean;
 }
 
-export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
+export const QRScanner = ({ onScanTicket, guests, active }: QRScannerProps) => {
   const [isScanning, setIsScanning] = useState(false);
   const [scannedData, setScannedData] = useState<any>(null);
   const [scanResult, setScanResult] = useState<'success' | 'error' | null>(null);
@@ -23,6 +25,15 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
     // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    if (active) {
+      setScannedData(null);
+      setScanResult(null);
+      setErrorMsg(null);
+    }
+  }, [active]);
+
+  // Fonction pour démarrer un nouveau scan et réinitialiser tous les états
   const startScanning = async () => {
     setErrorMsg(null);
     setScannedData(null);
@@ -134,17 +145,34 @@ export const QRScanner = ({ onScanTicket, guests }: QRScannerProps) => {
         </div>
       )}
 
-      {scannedData && (
+      {scannedData && scanResult && (
         <div className="mt-6">
           <div className={`p-4 rounded-lg ${scanResult === 'success' ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
             <div className="flex items-center mb-2">
               {scanResult === 'success' ? (
-                <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                <>
+                  {/* Vérification du statut du ticket dans la base */}
+                  {(() => {
+                    const guest = guests.find(g => g.ticketId === scannedData.ticketId);
+                    if (guest && guest.ticketStatus === 'Scanned') {
+                      return <span className="text-yellow-700 font-bold">⚠️ Ce ticket a déjà été scanné.</span>;
+                    }
+                    return <CheckCircle className="h-5 w-5 text-green-500 mr-2" />;
+                  })()}
+                </>
               ) : (
                 <XCircle className="h-5 w-5 text-red-500 mr-2" />
               )}
               <span className={`font-medium ${scanResult === 'success' ? 'text-green-800' : 'text-red-800'}`}>
-                {scanResult === 'success' ? 'Ticket valide' : 'Ticket invalide'}
+                {scanResult === 'success'
+                  ? (() => {
+                      const guest = guests.find(g => g.ticketId === scannedData.ticketId);
+                      if (guest && guest.ticketStatus === 'Scanned') {
+                        return 'Ticket déjà scanné';
+                      }
+                      return 'Ticket valide';
+                    })()
+                  : 'Ticket invalide'}
               </span>
             </div>
             <div className="space-y-2 text-sm">

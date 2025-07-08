@@ -1,6 +1,7 @@
-import  { useEffect, useState } from 'react';
+// Composant modal affichant le ticket invité avec QR code (frontend)
 import { generateQRCode } from '../utils/qrCodeUtils';
 import type { Guest } from '../types';
+import { useEffect, useState } from 'react';
 
 interface TicketModalProps {
   guest: Guest;

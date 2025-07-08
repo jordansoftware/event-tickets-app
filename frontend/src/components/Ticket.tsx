@@ -1,3 +1,4 @@
+// Composant d'affichage du ticket invité (frontend)
 import React, { useState, useEffect, useRef } from 'react';
 import { Download, Share2, FileText } from 'lucide-react';
 import { generateQRCode } from '../utils/qrCodeUtils';

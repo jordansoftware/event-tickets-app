@@ -1,3 +1,4 @@
+// Fichier de données de démonstration pour tester l'application (frontend)
 import type { Guest } from './types';
 import { generateId, generateTicketId } from './utils';
 

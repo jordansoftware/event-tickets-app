@@ -1,6 +1,10 @@
 import QRCode from 'qrcode';
 
-// Générer un QR code à partir des données du ticket
+// Fichier utilitaire pour la génération et la gestion des QR codes (frontend)
+// Utilisé pour créer les QR codes des tickets invités.
+
+// Fonction pour générer un QR code à partir d'une chaîne de caractères.
+// Elle retourne une image sous forme de data URL.
 export const generateQRCode = async (data: string): Promise<string> => {
   try {
     const qrCodeDataURL = await QRCode.toDataURL(data, {

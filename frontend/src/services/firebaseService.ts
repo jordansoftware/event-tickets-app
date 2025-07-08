@@ -1,3 +1,4 @@
+// Service utilitaire pour interagir avec Firebase/Firestore côté frontend.
 import { 
   collection, 
   addDoc, 
@@ -17,6 +18,7 @@ import type { Guest } from '../types';
 // Collection Firestore
 const GUESTS_COLLECTION = 'guests';
 
+// Fonction pour ajouter un invité dans Firestore.
 // Ajouter un invité
 export const addGuestToFirebase = async (guest: Guest): Promise<string> => {
   try {

@@ -1,27 +1,34 @@
+// Composant affichant la liste des invités (frontend)
 import { useState } from 'react';
 import { Search, Filter, Crown, User, Hash, Trash2 } from 'lucide-react';
 import type { Guest } from '../types';
 
+// Propriétés attendues par le composant GuestList
 interface GuestListProps {
   guests: Guest[];
   onUpdateGuestStatus: (guestId: string, status: 'Valid' | 'Scanned' | 'Invalid') => void;
   onDeleteGuest: (guestId: string) => void;
 }
 
+// Composant principal qui affiche la liste filtrable des invités
 export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestListProps) => {
+  // État pour la recherche par nom ou ID
   const [searchTerm, setSearchTerm] = useState('');
+  // État pour filtrer par statut de ticket
   const [statusFilter, setStatusFilter] = useState<'all' | 'Valid' | 'Scanned' | 'Invalid'>('all');
+  // État pour filtrer par type d'invité (VIP ou Standard)
   const [typeFilter, setTypeFilter] = useState<'all' | 'VIP' | 'Standard'>('all');
 
+  // Fonction utilitaire pour filtrer les invités selon les critères sélectionnés
   const filteredGuests = guests.filter(guest => {
     const matchesSearch = guest.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          guest.ticketId.includes(searchTerm);
     const matchesStatus = statusFilter === 'all' || guest.ticketStatus === statusFilter;
     const matchesType = typeFilter === 'all' || guest.status === typeFilter;
-    
     return matchesSearch && matchesStatus && matchesType;
   });
 
+  // Fonction utilitaire pour obtenir la couleur de badge selon le statut du ticket
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Valid':
@@ -35,6 +42,7 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
     }
   };
 
+  // Statistiques calculées sur la liste des invités
   const stats = {
     total: guests.length,
     valid: guests.filter(g => g.ticketStatus === 'Valid').length,
@@ -44,10 +52,10 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
     standard: guests.filter(g => g.status === 'Standard').length
   };
 
+  // Rendu du composant (UI)
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Liste des invités</h2>
-
       {/* Statistiques */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
         <div className="bg-blue-50 p-3 rounded-lg text-center">
@@ -75,7 +83,6 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
           <p className="text-xs text-gray-600">Standard</p>
         </div>
       </div>
-
       {/* Filtres */}
       <div className="mb-6 space-y-4">
         <div className="flex items-center space-x-2">
@@ -88,7 +95,6 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
             className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
         <div className="flex flex-wrap gap-2">
           <div className="flex items-center space-x-2">
             <Filter className="h-4 w-4 text-gray-400" />
@@ -104,7 +110,6 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
               <option value="Invalid">Invalides</option>
             </select>
           </div>
-
           <div className="flex items-center space-x-2">
             <Crown className="h-4 w-4 text-gray-400" />
             <span className="text-sm text-gray-600">Type:</span>
@@ -120,7 +125,6 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
           </div>
         </div>
       </div>
-
       {/* Liste des invités */}
       <div className="space-y-4">
         {filteredGuests.length === 0 ? (
@@ -130,6 +134,7 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
           </div>
         ) : (
           filteredGuests.map(guest => (
+            // Bloc affichant un invité avec ses infos et actions
             <div key={guest.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
@@ -142,7 +147,6 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
                       {guest.ticketStatus}
                     </span>
                   </div>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
                     <div className="flex items-center">
                       <Hash className="h-4 w-4 mr-2" />
@@ -153,8 +157,8 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
                     </div>
                   </div>
                 </div>
-
                 <div className="flex items-center space-x-2">
+                  {/* Sélecteur pour changer le statut du ticket */}
                   <select
                     value={guest.ticketStatus}
                     onChange={(e) => onUpdateGuestStatus(guest.id, e.target.value as 'Valid' | 'Scanned' | 'Invalid')}
@@ -164,7 +168,7 @@ export const GuestList = ({ guests, onUpdateGuestStatus, onDeleteGuest }: GuestL
                     <option value="Scanned">Scanné</option>
                     <option value="Invalid">Invalide</option>
                   </select>
-                  
+                  {/* Bouton pour supprimer l'invité */}
                   <button
                     onClick={() => onDeleteGuest(guest.id)}
                     className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"

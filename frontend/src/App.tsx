@@ -11,6 +11,7 @@ import { downloadAsImage, downloadAsPDF, shareTicketWithPDF } from './utils/tick
 
 type TabType = 'guests' | 'tickets' | 'scanner' | 'stats';
 
+// Composant principal de l'application React (frontend)
 function App() {
   const [guests, setGuests] = useState<Guest[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>('guests');
@@ -109,13 +110,13 @@ function App() {
   const handleScanQR = async (ticketData: any) => {
     try {
       const guest = guests.find(g => g.ticketId === ticketData.ticketId);
-      
       if (guest) {
         if (guest.ticketStatus === 'Valid') {
           await handleUpdateGuestStatus(guest.id, 'Scanned');
           alert(`✅ Invité ${guest.fullName} validé avec succès !`);
         } else if (guest.ticketStatus === 'Scanned') {
-          alert(`⚠️ Le ticket de ${guest.fullName} a déjà été scanné.`);
+          // On n'affiche le message que si scanResult === 'success' (côté QRScanner)
+          // Donc on ne fait rien ici, le message doit être géré dans QRScanner ou via un prop
         } else {
           alert(`❌ Le ticket de ${guest.fullName} est invalide.`);
         }
@@ -247,7 +248,7 @@ function App() {
             )}
 
             {activeTab === 'scanner' && (
-              <QRScanner onScanTicket={handleScanQR} guests={guests} />
+              <QRScanner onScanTicket={handleScanQR} guests={guests} active={activeTab === 'scanner'} />
             )}
 
             {activeTab === 'stats' && (

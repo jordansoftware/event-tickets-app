@@ -14,7 +14,8 @@ import type { Guest } from '../types';
 // Collection Firestore pour les invités
 const GUESTS_COLLECTION = 'guests';
 
-
+// Service pour gérer les invités dans Firestore (ajout, suppression, stats, etc.)
+// Utilisé côté frontend pour interagir avec la base de données Firebase.
 
 // Générer un ID de ticket unique
 const generateTicketId = (): string => {
@@ -48,7 +49,7 @@ export const guestService = {
     return new Date();
   },
 
-  // Récupérer tous les invités
+  // Fonction pour récupérer tous les invités depuis Firestore.
   async getAllGuests(): Promise<Guest[]> {
     try {
       console.log('🔍 Tentative de récupération des invités depuis Firebase...');

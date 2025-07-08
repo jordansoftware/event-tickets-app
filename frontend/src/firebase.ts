@@ -3,6 +3,9 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getDocs, collection } from 'firebase/firestore';
 
+// Fichier de configuration et d'initialisation de Firebase côté frontend.
+// Permet de connecter l'application à la base de données Firestore et à l'authentification Firebase.
+
 // Configuration Firebase avec variables d'environnement
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -46,4 +49,19 @@ export const checkFirebaseConnection = async (): Promise<boolean> => {
   }
 };
 
-export default app; 
+export default app;
+
+// Pour éviter les erreurs TypeScript sur import.meta.env, il faut déclarer les variables dans vite-env.d.ts
+// Exemple à ajouter dans vite-env.d.ts :
+// interface ImportMetaEnv {
+//   VITE_FIREBASE_API_KEY: string;
+//   VITE_FIREBASE_AUTH_DOMAIN: string;
+//   VITE_FIREBASE_PROJECT_ID: string;
+//   VITE_FIREBASE_STORAGE_BUCKET: string;
+//   VITE_FIREBASE_MESSAGING_SENDER_ID: string;
+//   VITE_FIREBASE_APP_ID: string;
+//   VITE_FIREBASE_MEASUREMENT_ID: string;
+// }
+// interface ImportMeta {
+//   readonly env: ImportMetaEnv;
+// } 
