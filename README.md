@@ -23,26 +23,16 @@
 
 ## 🛠️ Stack Technique
 
-Voici la version mise à jour avec **Lucia UI** ajoutée dans la liste, sans logo ni lien :
-
-```markdown
-## 🛠️ Stack Technique
-
 | Technologie             | Utilité                                      | Logo / Badge                                                                                  |
 |------------------------|---------------------------------------------|----------------------------------------------------------------------------------------------|
 | **React**              | Framework frontend                          | ![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)               |
 | **TypeScript**         | JavaScript typé                             | ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)|
 | **Tailwind CSS**       | Styling moderne et utilitaire               | ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?logo=tailwind-css&logoColor=white) |
 | **Firebase**           | Backend (authentification, base de données) | ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?logo=firebase&logoColor=black)       |
-| **Lucia UI**           | Composants UI et authentification          | *(pas de badge officiel disponible)*                                                        |
 | **qrcode.react**       | Génération des codes QR                     | ![QR Code](https://img.shields.io/badge/QRCode-000000?logo=qr-code&logoColor=white)           |
 | **jsPDF**              | Export PDF                                  | ![jsPDF](https://img.shields.io/badge/jsPDF-FF0000?logo=javascript&logoColor=white)           |
 | **html2canvas**        | Capture d’écran en canvas                    | ![HTML5](https://img.shields.io/badge/html5-E34F26?logo=html5&logoColor=white)                |
 | **React Router**       | Navigation & routage                        | ![React Router](https://img.shields.io/badge/React_Router-CA4245?logo=react-router&logoColor=white) |
-```
-
-Veux-tu que je te réintègre toute la section complète ?
-
 
 *Note : Lucia UI est utilisée pour les composants UI et l'authentification, mais n'a pas de badge officiel.*
 
