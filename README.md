@@ -31,8 +31,9 @@
 | **Firebase**           | Backend (authentification, base de données) | ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?logo=firebase&logoColor=black)       |
 | **qrcode.react**       | Génération des codes QR                     | ![QR Code](https://img.shields.io/badge/QRCode-000000?logo=qr-code&logoColor=white)           |
 | **jsPDF**              | Export PDF                                  | ![jsPDF](https://img.shields.io/badge/jsPDF-FF0000?logo=javascript&logoColor=white)           |
-| **html2canvas**        | Capture d’écran en canvas                    | ![HTML5](https://img.shields.io/badge/html5-E34F26?logo=html5&logoColor=white)                |
+| **html2canvas**        | Capture d’écran en canvas                   | ![HTML5](https://img.shields.io/badge/html5-E34F26?logo=html5&logoColor=white)                |
 | **React Router**       | Navigation & routage                        | ![React Router](https://img.shields.io/badge/React_Router-CA4245?logo=react-router&logoColor=white) |
+| **Lucia UI**           | Composants UI et authentification           | ![Lucia UI]([https://img.shields.io/badge/React_Router-CA4245?logo=react-router&logoColor=white](https://d33wubrfki0l68.cloudfront.net/b3c803bb313f5deafe1cfb52c307182f4c72a833/b125b/img/logo.svg)) |
 
 *Note : Lucia UI est utilisée pour les composants UI et l'authentification, mais n'a pas de badge officiel.*
 
